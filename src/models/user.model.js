@@ -25,22 +25,22 @@ const userSchema = new mongoose.Schema({
 })
 //executes this function before data will be save in DB
 //act as a middleware
-userSchema.pre("save",async (next)=> {
+userSchema.pre("save",async function(){
     //if user change the pass then convert the pass into hash
     if(!this.isModified("password")){
-        return next()
+        return
     }
     try{
         const salt = await bcrypt.genSalt(10)
         this.password = await bcrypt.hash(this.password, salt)
         next()
     } catch(err){
-        return next(err)
+        return 
     }
 })
 
 //compare the password with the hashed pass in DB 
-userSchema.methods.comparePassword = async (pass) => {
+userSchema.methods.comparePassword = async function(pass) {
     return await bcrypt.compare(pass, this.password)
 }
 
